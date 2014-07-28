@@ -44,9 +44,10 @@ public class Link implements Cloneable, Comparable<Link> {
     this.trg_ = other.trg_;
   }
   
-  public Object clone() {
+  @Override
+  public Link clone() {
     try {
-      return (super.clone());
+      return ((Link)super.clone());
     } catch (CloneNotSupportedException cnse) {
       throw new IllegalStateException();
     }
@@ -60,10 +61,12 @@ public class Link implements Cloneable, Comparable<Link> {
     return (src_);
   }    
 
+  @Override
   public int hashCode() {
     return (src_.hashCode() + trg_.hashCode());
   }
 
+  @Override
   public String toString() {
     return ("src = " + src_ + " trg = " + trg_);
   }
@@ -89,6 +92,7 @@ public class Link implements Cloneable, Comparable<Link> {
     return ("--");
   }
   
+  @Override
   public boolean equals(Object other) {
     if (other == null) {
       return (false);

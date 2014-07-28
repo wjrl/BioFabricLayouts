@@ -34,10 +34,10 @@ import java.util.Set;
 
 /****************************************************************************
 **
-** Generate Random 3-Mode DAG
+** Generate Random N-Mode DAG
 */
 
-public class GenRand3ModeDAG {
+public class GenRandNModeDAG {
 
   ////////////////////////////////////////////////////////////////////////////
   //
@@ -45,9 +45,7 @@ public class GenRand3ModeDAG {
   //
   ////////////////////////////////////////////////////////////////////////////
 
-  private final static int NUM_NODES_ = 100;
-  private final static int NUM_LINKS_ = 200;
-  private final static int NUM_NODE_CLASSES_ = 3;
+
   private final static int RAND_SEED_ = 17;
 
   ////////////////////////////////////////////////////////////////////////////
@@ -67,7 +65,7 @@ public class GenRand3ModeDAG {
   ** Constructor
   */
 
-  public GenRand3ModeDAG() {
+  public GenRandNModeDAG() {
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -76,9 +74,9 @@ public class GenRand3ModeDAG {
   //
   ////////////////////////////////////////////////////////////////////////////
 
-   /***************************************************************************
+  /***************************************************************************
   **
-  ** Output Smaller sif file
+  ** Output sif file
   */
 
   public void writeSif(Set<Link> linkList, String outfile, String tag, Map<String, Integer> nodeToClass) throws IOException {
@@ -105,18 +103,18 @@ public class GenRand3ModeDAG {
     return;
   }
 
- /***************************************************************************
+  /***************************************************************************
   **
-  ** Test frame
+  ** Make the DAG
   */
 
-  public void makeDaDag(Map<String, Integer> nodeToClass, Set<Link> links) {
+  public void makeDaDag(Map<String, Integer> nodeToClass, Set<Link> links, int numNodes, int numLinks, int numModes) {
     Random randGen = new Random(RAND_SEED_);
-    while (links.size() < NUM_LINKS_) {
-      int randie1 = randGen.nextInt(NUM_NODES_);
+    while (links.size() < numLinks) {
+      int randie1 = randGen.nextInt(numNodes);
       int randie2 = randie1;
       while (randie2 == randie1) {
-        randie2 = randGen.nextInt(NUM_NODES_);
+        randie2 = randGen.nextInt(numNodes);
       }
       if (randie1 > randie2) {
         int tempoRand = randie1;
@@ -125,12 +123,12 @@ public class GenRand3ModeDAG {
       }
       Integer c4n = nodeToClass.get(Integer.toString(randie1));
       if (c4n == null) {
-        c4n = Integer.valueOf(randGen.nextInt(NUM_NODE_CLASSES_));
+        c4n = Integer.valueOf(randGen.nextInt(numModes));
         nodeToClass.put(Integer.toString(randie1), c4n);
       }
       c4n = nodeToClass.get(Integer.toString(randie2));
       if (c4n == null) {
-        c4n = Integer.valueOf(randGen.nextInt(NUM_NODE_CLASSES_));
+        c4n = Integer.valueOf(randGen.nextInt(numModes));
         nodeToClass.put(Integer.toString(randie2), c4n);
       }
       Link daLink = new Link(Integer.toString(randie1), Integer.toString(randie2));
@@ -146,17 +144,29 @@ public class GenRand3ModeDAG {
 
   /***************************************************************************
   **
-  ** Test frame
+  ** Run program
   */
 
   public static void main(String[] argv) {
-    GenRand3ModeDAG cp = new GenRand3ModeDAG();
-    try {
-      String sifOut = "C:\\Users\\wlongaba\\Desktop\\TriModeDAG\\TriMode" + NUM_NODES_ + "-" + NUM_LINKS_ + ".sif";
+  	  	
+  	if (argv.length != 4) {
+  		System.out.println("Usage: java -cp BioFabricModalDAGLayout.jar org.systemsbiology.biofabric.layoutTools.GenRandNModeDAG numModes numNodes numLinks outfileName");
+  		return;
+  	}
+  	
+  	try {
+  		GenRandNModeDAG cp = new GenRandNModeDAG();
+      String sifOut = argv[3];
+      int numModes = Integer.parseInt(argv[0]);
+      int numNodes = Integer.parseInt(argv[1]);
+      int numLinks = Integer.parseInt(argv[2]);
       Map<String, Integer> nodeToClass = new HashMap<String, Integer>();
       HashSet<Link> links = new HashSet<Link>();
-      cp.makeDaDag(nodeToClass, links);
+      cp.makeDaDag(nodeToClass, links, numNodes, numLinks, numModes);
       cp.writeSif(links, sifOut, "to", nodeToClass);
+    } catch (NumberFormatException ex) {
+      System.err.println("Illegal non-numeric argument: " + argv[0] + " " + argv[1] + " " + argv[2]);
+      return;
     } catch (Exception ex) {
       System.err.println("Caught exception:" + ex);
     }

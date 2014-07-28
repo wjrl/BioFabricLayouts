@@ -51,6 +51,12 @@ import java.util.TreeSet;
 
 public class MultiModeDagLayout {
 
+	////////////////////////////////////////////////////////////////////////////
+  //
+  // PRIVATE CONSTANTS
+  //
+  ////////////////////////////////////////////////////////////////////////////
+
   ////////////////////////////////////////////////////////////////////////////
   //
   // PRIVATE INSTANCE MEMBERS
@@ -329,19 +335,24 @@ public class MultiModeDagLayout {
 
   /***************************************************************************
   **
-  ** Test frame
+  ** Run program
   */
 
   public static void main(String[] argv) {
+  	  	
+  	if (argv.length != 2) {
+  		System.out.println("Usage: java -cp BioFabricModalDAGLayout.jar org.systemsbiology.biofabric.layoutTools.MultiModeDagLayout sifInfile noaOutfile");
+  		return;
+  	}
+  	
     MultiModeDagLayout cp = new MultiModeDagLayout();
     try {
-      String sifOut = "C:\\Users\\wlongaba\\Desktop\\TriModeDAG\\TriMode100-200.sif";
-      String noaOut = "C:\\Users\\wlongaba\\Desktop\\TriModeDAG\\TriMode100-200.noa";
+      String sifIn = argv[0];
+      String noaOut = argv[1];
       
       Map<String, Integer> nodeToClass = new HashMap<String, Integer>();
       HashSet<Link> links = new HashSet<Link>();
-      int maxClass = cp.readNodesAndLinks(new File(sifOut), nodeToClass, links);
-
+      int maxClass = cp.readNodesAndLinks(new File(sifIn), nodeToClass, links);
       HashSet<String> nodeSet = new HashSet<String>(nodeToClass.keySet());
       HashSet<String> nodesToGo = new HashSet<String>(nodeSet);
       cp.linksToSources(nodeSet, new ArrayList<Link>(links));
